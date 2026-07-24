@@ -23,5 +23,5 @@ jobs:
       - name: Analyze code
         run: flutter analyze
 
-      - name: Check Flutter version
-        run: flutter --version
+      - name: Run tests
+        run: flutter test
