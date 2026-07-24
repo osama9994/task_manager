@@ -12,5 +12,10 @@ jobs:
       - name: Get project code
         uses: actions/checkout@v4
 
-      - name: Print message
-        run: echo "Hello from GitHub Actions"
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.10'
+
+      - name: Check Flutter version
+        run: flutter --version
