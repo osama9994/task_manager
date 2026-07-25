@@ -49,3 +49,9 @@ jobs:
         with:
           name: task-manager-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+     
+      - name: Test GitHub Secret
+        env:
+          MY_SECRET: ${{ secrets.TEST_SECRET }}
+        run: |
+          echo "Secret was loaded successfully"
