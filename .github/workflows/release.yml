@@ -15,6 +15,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+        
+      - name: Create Firebase Options
+        env:
+          FIREBASE_OPTIONS_DART: ${{ secrets.FIREBASE_OPTIONS_DART }}
+        run: |
+          echo "$FIREBASE_OPTIONS_DART" > lib/firebase_options.dart
+     
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
