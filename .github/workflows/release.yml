@@ -20,8 +20,13 @@ jobs:
           FIREBASE_OPTIONS_BASE64: ${{ secrets.FIREBASE_OPTIONS_BASE64 }}
         run: |
           echo "$FIREBASE_OPTIONS_BASE64" | base64 --decode > lib/firebase_options.dart
-        
-      
+
+      - name: Create google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          echo "$GOOGLE_SERVICES_JSON" | base64 --decode > android/app/google-services.json
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -52,13 +57,12 @@ jobs:
 
       - name: Upload APK to Firebase App Distribution
         env:
-         GOOGLE_APPLICATION_CREDENTIALS: firebase-key.json
+          GOOGLE_APPLICATION_CREDENTIALS: firebase-key.json
         run: |
-         firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
-          --app 1:508965509195:android:90cb3e7a0e379e8dd095ce \
-          --groups developers \
-          --release-notes "New release from GitHub Actions"
-
+          firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
+            --app 1:508965509195:android:90cb3e7a0e379e8dd095ce \
+            --groups developers \
+            --release-notes "New release from GitHub Actions"
 
       - name: Remove Firebase Key
         run: rm firebase-key.json
