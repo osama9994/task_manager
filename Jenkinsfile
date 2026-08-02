@@ -24,5 +24,10 @@ pipeline {
                 bat "\"%FLUTTER%\" analyze"
             }
         }
+        stage('Run Tests') {
+    steps {
+        bat "\"%FLUTTER%\" test"
+    }
+}
     }
 }
