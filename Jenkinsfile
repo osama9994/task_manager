@@ -29,5 +29,10 @@ pipeline {
         bat "\"%FLUTTER%\" test"
     }
 }
+stage('Build APK') {
+    steps {
+        bat "\"%FLUTTER%\" build apk --release"
+    }
+}
     }
 }
