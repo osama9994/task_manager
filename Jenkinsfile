@@ -18,5 +18,11 @@ pipeline {
                 bat "\"%FLUTTER%\" pub get"
             }
         }
+
+        stage('Analyze Code') {
+            steps {
+                bat "\"%FLUTTER%\" analyze"
+            }
+        }
     }
 }
