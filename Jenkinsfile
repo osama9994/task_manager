@@ -1,16 +1,21 @@
 pipeline {
     agent any
 
+    environment {
+        FLUTTER = "C:\\Users\\alsha\\scr\\flutter\\bin\\flutter.bat"
+    }
+
     stages {
-        stage('Checkout Complete') {
-            steps {
-                echo 'Repository cloned successfully!'
-            }
-        }
 
         stage('Flutter Version') {
             steps {
-                bat '"C:\\Users\\alsha\\scr\\flutter\\bin\\flutter.bat" --version'
+                bat "\"%FLUTTER%\" --version"
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                bat "\"%FLUTTER%\" pub get"
             }
         }
     }
