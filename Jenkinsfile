@@ -6,19 +6,20 @@ pipeline {
     }
 
     stages {
-stage('Show User') {
-    steps {
-        bat 'whoami'
-        bat 'echo USERPROFILE=%USERPROFILE%'
-        bat 'echo APPDATA=%APPDATA%'
-        bat 'echo TEMP=%TEMP%'
-    }
-}
-        stage('Flutter Version') {
-            steps {
-                bat "\"%FLUTTER%\" --version"
-            }
-        }
+        // stage('Show User') {
+        //     steps {
+        //         bat 'whoami'
+        //         bat 'echo USERPROFILE=%USERPROFILE%'
+        //         bat 'echo APPDATA=%APPDATA%'
+        //         bat 'echo TEMP=%TEMP%'
+        //     }
+        // }
+
+        // stage('Flutter Version') {
+        //     steps {
+        //         bat "\"%FLUTTER%\" --version"
+        //     }
+        // }
 
         stage('Install Dependencies') {
             steps {
@@ -31,26 +32,40 @@ stage('Show User') {
                 bat "\"%FLUTTER%\" analyze"
             }
         }
+
         stage('Run Tests') {
-    steps {
-        bat "\"%FLUTTER%\" test"
+            steps {
+                bat "\"%FLUTTER%\" test"
+            }
+        }
+
+        // stage('Check Android Environment') {
+        //     steps {
+        //         bat 'echo ANDROID_HOME=%ANDROID_HOME%'
+        //         bat 'echo ANDROID_SDK_ROOT=%ANDROID_SDK_ROOT%'
+        //     }
+        // }
+
+        // stage('Flutter Doctor') {
+        //     steps {
+        //         bat '"%FLUTTER%" doctor -v'
+        //     }
+        // }
+
+        stage('Build APK') {
+            steps {
+                bat '"%FLUTTER%" build apk --release'
+            }
+        }
     }
-}
-stage('Check Android Environment') {
-    steps {
-        bat 'echo ANDROID_HOME=%ANDROID_HOME%'
-        bat 'echo ANDROID_SDK_ROOT=%ANDROID_SDK_ROOT%'
-    }
-}
-stage('Flutter Doctor') {
-    steps {
-        bat '"%FLUTTER%" doctor -v'
-    }
-}
-stage('Build APK') {
-    steps {
-        bat '"%FLUTTER%" build apk --release'
-    }
-}
+
+    post {
+        success {
+            echo 'success archiveArtifacts artifacts'
+            archiveArtifacts artifacts: 'build/app/outputs/flutter-apk/app-release.apk', fingerprint: true
+        }
+        failure {
+            echo 'failure archiveArtifacts artifacts'
+        }
     }
 }
