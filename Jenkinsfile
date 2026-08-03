@@ -29,6 +29,12 @@ pipeline {
         bat "\"%FLUTTER%\" test"
     }
 }
+stage('Check Android Environment') {
+    steps {
+        bat 'echo ANDROID_HOME=%ANDROID_HOME%'
+        bat 'echo ANDROID_SDK_ROOT=%ANDROID_SDK_ROOT%'
+    }
+}
 stage('Build APK') {
     steps {
         bat "\"%FLUTTER%\" build apk --release"
