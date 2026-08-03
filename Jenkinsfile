@@ -1,3 +1,30 @@
+pipeline {
+    agent any
+
+    environment {
+        FLUTTER = "C:\\Users\\alsha\\scr\\flutter\\bin\\flutter.bat"
+    }
+
+    stages {
+
+        stage('Show User') {
+            steps {
+                bat 'whoami'
+                bat 'echo USERPROFILE=%USERPROFILE%'
+                bat 'echo APPDATA=%APPDATA%'
+                bat 'echo TEMP=%TEMP%'
+            }
+        }
+
+        stage('Flutter Version') {
+            steps {
+                bat '"%FLUTTER%" --version'
+            }
+        }
+
+        // باقي الـ Stages...
+    }
+}
 // pipeline {
 //     agent any
 
@@ -55,11 +82,3 @@
 //     }
 // }
 
-stage('Show User') {
-    steps {
-        bat 'whoami'
-        bat 'echo USERPROFILE=%USERPROFILE%'
-        bat 'echo APPDATA=%APPDATA%'
-        bat 'echo TEMP=%TEMP%'
-    }
-}
