@@ -6,7 +6,14 @@ pipeline {
     }
 
     stages {
-
+stage('Show User') {
+    steps {
+        bat 'whoami'
+        bat 'echo USERPROFILE=%USERPROFILE%'
+        bat 'echo APPDATA=%APPDATA%'
+        bat 'echo TEMP=%TEMP%'
+    }
+}
         stage('Flutter Version') {
             steps {
                 bat "\"%FLUTTER%\" --version"
@@ -35,9 +42,14 @@ stage('Check Android Environment') {
         bat 'echo ANDROID_SDK_ROOT=%ANDROID_SDK_ROOT%'
     }
 }
+stage('Flutter Doctor') {
+    steps {
+        bat '"%FLUTTER%" doctor -v'
+    }
+}
 stage('Build APK') {
     steps {
-        bat "\"%FLUTTER%\" build apk --release"
+        bat '"%FLUTTER%" build apk --release --verbose'
     }
 }
     }
