@@ -1,71 +1,80 @@
 pipeline {
-    agent any
+agent any
 
-    environment {
-        FLUTTER = "C:\\Users\\alsha\\scr\\flutter\\bin\\flutter.bat"
-    }
 
-    stages {
-        // stage('Show User') {
-        //     steps {
-        //         bat 'whoami'
-        //         bat 'echo USERPROFILE=%USERPROFILE%'
-        //         bat 'echo APPDATA=%APPDATA%'
-        //         bat 'echo TEMP=%TEMP%'
-        //     }
-        // }
+environment {
+    FLUTTER = "C:\\Users\\alsha\\scr\\flutter\\bin\\flutter.bat"
+}
 
-        // stage('Flutter Version') {
-        //     steps {
-        //         bat "\"%FLUTTER%\" --version"
-        //     }
-        // }
+stages {
 
-        stage('Install Dependencies') {
-            steps {
-                bat "\"%FLUTTER%\" pub get"
-            }
-        }
-
-        stage('Analyze Code') {
-            steps {
-                bat "\"%FLUTTER%\" analyze"
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                bat "\"%FLUTTER%\" test"
-            }
-        }
-
-        // stage('Check Android Environment') {
-        //     steps {
-        //         bat 'echo ANDROID_HOME=%ANDROID_HOME%'
-        //         bat 'echo ANDROID_SDK_ROOT=%ANDROID_SDK_ROOT%'
-        //     }
-        // }
-
-        // stage('Flutter Doctor') {
-        //     steps {
-        //         bat '"%FLUTTER%" doctor -v'
-        //     }
-        // }
-
-        stage('Build APK') {
-            steps {
-                bat '"%FLUTTER%" build apk --release'
-            }
+    stage('Show User') {
+        steps {
+            bat 'whoami'
+            bat 'echo USERPROFILE=%USERPROFILE%'
+            bat 'echo APPDATA=%APPDATA%'
+            bat 'echo TEMP=%TEMP%'
         }
     }
 
-    post {
-        success {
-            echo 'success archiveArtifacts artifacts'
-            archiveArtifacts artifacts: 'build/app/outputs/flutter-apk/app-release.apk', fingerprint: true
-        }
-        failure {
-            echo 'failure archiveArtifacts artifacts'
+    stage('Flutter Version') {
+        steps {
+            bat '"%FLUTTER%" --version'
         }
     }
+
+    stage('Install Dependencies') {
+        steps {
+            bat '"%FLUTTER%" pub get'
+        }
+    }
+
+    stage('Analyze Code') {
+        steps {
+            bat '"%FLUTTER%" analyze'
+        }
+    }
+
+    stage('Run Tests') {
+        steps {
+            bat '"%FLUTTER%" test'
+        }
+    }
+
+    stage('Check Android Environment') {
+        steps {
+            bat 'echo ANDROID_HOME=%ANDROID_HOME%'
+            bat 'echo ANDROID_SDK_ROOT=%ANDROID_SDK_ROOT%'
+        }
+    }
+
+    stage('Flutter Doctor') {
+        steps {
+            bat '"%FLUTTER%" doctor -v'
+        }
+    }
+
+    // stage('Build APK') {
+    //     steps {
+    //         bat '"%FLUTTER%" build apk --release'
+    //     }
+    // }
+}
+
+post {
+
+    success {
+        echo 'Pipeline completed successfully.'
+    }
+
+    failure {
+        echo 'Pipeline failed.'
+    }
+
+    always {
+        echo 'Pipeline execution finished.'
+    }
+}
+
+
 }
