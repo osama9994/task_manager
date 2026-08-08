@@ -10,20 +10,21 @@ pipeline {
         stage('Check Branch Info') {
             steps {
                 script {
+                    // استخراج اسم الفرع الحالي عبر Git
+                    def currentBranch = bat(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim().split('\n').last()
+                    env.GIT_CURRENT_BRANCH = currentBranch
+                    
                     echo "=========================================="
-                    echo "Building for Branch: ${env.BRANCH_NAME}"
+                    echo "Building for Branch: ${env.GIT_CURRENT_BRANCH}"
                     echo "=========================================="
                 }
             }
         }
 
         stage('Install Dependencies') {
-            // الشرط: ينفذ فقط إذا كان الفرع main أو develop
             when {
-                anyOf {
-                    branch 'main'
-                    branch 'develop'
-                    // يمكنك إضافة فروع أخرى مثل: branch 'feature/*'
+                expression { 
+                    return env.GIT_CURRENT_BRANCH == 'main' || env.GIT_CURRENT_BRANCH == 'develop' || env.GIT_BRANCH?.contains('main')
                 }
             }
             steps {
@@ -32,18 +33,13 @@ pipeline {
         }
 
         stage('Run Tests & Generate Reports') {
-            // شرط الفروع لضمان عدم تشغيل الاختبارات على الفروع غير المسموحة
             when {
-                anyOf {
-                    branch 'main'
-                    branch 'develop'
+                expression { 
+                    return env.GIT_CURRENT_BRANCH == 'main' || env.GIT_CURRENT_BRANCH == 'develop' || env.GIT_BRANCH?.contains('main')
                 }
             }
             steps {
-                // 1. تشغيل الاختبارات وتوليد التقرير
                 bat '"%FLUTTER%" test --coverage --machine > test-results.json || exit 0'
-
-                // 2. تحويل التقرير إلى صيغة JUnit XML
                 bat '"%FLUTTER%" pub run junitreport:tojunit --input test-results.json --output junit-report.xml'
             }
         }
@@ -52,7 +48,6 @@ pipeline {
     post {
         always {
             script {
-                // التقارير تُنشر فقط إذا تم إنشاء الملفات فعلياً (أي في الفروع المسموحة)
                 if (fileExists('junit-report.xml')) {
                     echo "Publishing Test Results & Coverage..."
                     junit testResults: 'junit-report.xml', allowEmptyResults: true
