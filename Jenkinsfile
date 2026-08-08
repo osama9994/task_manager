@@ -26,23 +26,17 @@ pipeline {
     }
 
     post {
+    always {
+        echo "Publishing Test Results & Coverage..."
 
-        always {
-            echo "Publishing Test Results..."
+        // 1. نشر تقارير الاختبارات (JUnit)
+        junit testResults: 'junit-report.xml', allowEmptyResults: true
 
-            // أرشفة ملف الـ XML الأصلي
-            archiveArtifacts artifacts: 'junit-report.xml', allowEmptyArchive: true
+        // 2. أرشفة ملف التغطية الأصلي lcov.info
+        archiveArtifacts artifacts: 'coverage/lcov.info', allowEmptyArchive: true
 
-            // أمر Jenkins المدمج لتحليل تقرير JUnit وعرض الرسوم البيانية
-            junit testResults: 'junit-report.xml', allowEmptyResults: true
-        }
-
-        success {
-            echo "SUCCESS: All tests passed and report published."
-        }
-
-        failure {
-            echo "FAILURE: Pipeline execution failed."
-        }
+        // 3. نشر التغطية باستخدام Coverage Plugin
+        recordCoverage tools: [[parser: 'LCOV', pattern: 'coverage/lcov.info']]
     }
+}
 }
