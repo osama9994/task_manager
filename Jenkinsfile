@@ -13,30 +13,29 @@ pipeline {
             }
         }
 
-        stage('Run Tests & Generate JUnit Report') {
+        stage('Run Tests & Generate Reports') {
             steps {
-                // 1. تشغيل الاختبارات واستخراج النتيجة بصيغة JSON
-                // استخدام || exit 0 يضمن استمرار البناء لتوليد التقرير حتى لو فشل اختبار
-                bat '"%FLUTTER%" test --machine > test-results.json || exit 0'
+                // إضافة --coverage لتوليد ملف coverage/lcov.info
+                bat '"%FLUTTER%" test --coverage --machine > test-results.json || exit 0'
 
-                // 2. تحويل ملف JSON إلى تقرير JUnit XML
+                // تحويل التقرير إلى JUnit XML
                 bat '"%FLUTTER%" pub run junitreport:tojunit --input test-results.json --output junit-report.xml'
             }
         }
     }
 
     post {
-    always {
-        echo "Publishing Test Results & Coverage..."
+        always {
+            echo "Publishing Test Results & Coverage..."
 
-        // 1. نشر تقارير الاختبارات (JUnit)
-        junit testResults: 'junit-report.xml', allowEmptyResults: true
+            // 1. نشر تقارير الاختبارات
+            junit testResults: 'junit-report.xml', allowEmptyResults: true
 
-        // 2. أرشفة ملف التغطية الأصلي lcov.info
-        archiveArtifacts artifacts: 'coverage/lcov.info', allowEmptyArchive: true
+            // 2. أرشفة ملف التغطية (سيصبح موجوداً الآن)
+            archiveArtifacts artifacts: 'coverage/lcov.info', allowEmptyArchive: true
 
-        // 3. نشر التغطية باستخدام Coverage Plugin
-        recordCoverage tools: [[parser: 'LCOV', pattern: 'coverage/lcov.info']]
+            // 3. نشر التغطية الرسومية
+            recordCoverage tools: [[parser: 'LCOV', pattern: 'coverage/lcov.info']]
+        }
     }
-}
 }
