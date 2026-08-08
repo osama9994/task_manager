@@ -6,20 +6,17 @@ pipeline {
     }
 
     stages {
-
-        stage('Check Branch Info') {
-            steps {
-                script {
-                    // استخراج اسم الفرع الحالي عبر Git
-                    def currentBranch = bat(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim().split('\n').last()
-                    env.GIT_CURRENT_BRANCH = currentBranch
-                    
-                    echo "=========================================="
-                    echo "Building for Branch: ${env.GIT_CURRENT_BRANCH}"
-                    echo "=========================================="
-                }
-            }
+stage('Check Branch Info') {
+    steps {
+        script {
+            // المحاولة من متغيرات البيئة أو أمر Git
+            def branch = env.BRANCH_NAME ?: bat(script: 'git name-rev --name-only HEAD', returnStdout: true).trim().split('\n').last()
+            echo "=========================================="
+            echo "Building for Branch: ${branch}"
+            echo "=========================================="
         }
+    }
+}
 
         stage('Install Dependencies') {
             when {
