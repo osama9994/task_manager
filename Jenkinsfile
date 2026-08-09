@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
 
@@ -219,12 +218,9 @@ pipeline {
                     echo "=========================================="
 
                     if (fileExists(apkPath)) {
-
                         echo "APK found successfully!"
                         echo "APK Path: ${apkPath}"
-
                     } else {
-
                         error "APK was not found: ${apkPath}"
                     }
 
@@ -259,46 +255,49 @@ pipeline {
                     echo "=========================================="
                 }
             }
-            
-stage('Deploy - SIMULATED') {
-    steps {
-        script {
-            def apkPath
-
-            if (params.BUILD_TYPE == 'release') {
-                apkPath = 'build\\app\\outputs\\flutter-apk\\app-release.apk'
-            } else {
-                apkPath = 'build\\app\\outputs\\flutter-apk\\app-debug.apk'
-            }
-
-            echo "=========================================="
-            echo "SIMULATED DEPLOYMENT"
-            echo "=========================================="
-            echo "Application : ${env.APP_NAME}"
-            echo "Version     : ${params.APP_VERSION}"
-            echo "Build Type  : ${params.BUILD_TYPE}"
-            echo "APK Path    : ${apkPath}"
-            echo "Build Number: ${env.BUILD_NUMBER}"
-            echo ""
-
-            if (fileExists(apkPath)) {
-                echo "APK found successfully."
-                echo "Simulating deployment..."
-                echo "Uploading APK..."
-                echo "Deployment target: SIMULATED SERVER"
-                echo "Deployment completed successfully!"
-            } else {
-                error "Deployment failed: APK was not found at ${apkPath}"
-            }
-
-            echo "=========================================="
-            echo "SIMULATED DEPLOYMENT SUCCESS"
-            echo "=========================================="
         }
-    }
-}
 
+        stage('Deploy - SIMULATED') {
+            steps {
+                script {
 
+                    def apkPath
+
+                    if (params.BUILD_TYPE == 'release') {
+                        apkPath = 'build\\app\\outputs\\flutter-apk\\app-release.apk'
+                    } else {
+                        apkPath = 'build\\app\\outputs\\flutter-apk\\app-debug.apk'
+                    }
+
+                    echo "=========================================="
+                    echo "SIMULATED DEPLOYMENT"
+                    echo "=========================================="
+
+                    echo "Application : ${env.APP_NAME}"
+                    echo "Version     : ${params.APP_VERSION}"
+                    echo "Build Type  : ${params.BUILD_TYPE}"
+                    echo "APK Path    : ${apkPath}"
+                    echo "Build Number: ${env.BUILD_NUMBER}"
+                    echo ""
+
+                    if (fileExists(apkPath)) {
+
+                        echo "APK found successfully."
+                        echo "Simulating deployment..."
+                        echo "Uploading APK..."
+                        echo "Deployment target: SIMULATED SERVER"
+                        echo "Deployment completed successfully!"
+
+                    } else {
+
+                        error "Deployment failed: APK was not found at ${apkPath}"
+                    }
+
+                    echo "=========================================="
+                    echo "SIMULATED DEPLOYMENT SUCCESS"
+                    echo "=========================================="
+                }
+            }
         }
     }
 
