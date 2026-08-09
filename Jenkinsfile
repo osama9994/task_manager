@@ -7,11 +7,17 @@ parameters {
         defaultValue: '1.0.0',
         description: 'Application version'
     )
+
+    choice(
+        name: 'BUILD_TYPE',
+        choices: ['debug', 'release'],
+        description: 'Choose the Flutter build type'
+    )
 }
 environment {
     FLUTTER = "C:\\Users\\alsha\\scr\\flutter\\bin\\flutter.bat"
     APP_NAME = "task_manager"
-    BUILD_TYPE = "debug"
+#
 
 
 }
@@ -33,6 +39,7 @@ stages {
 stage('Environment Variables') {
     steps {
         echo "APP_VERSION = ${params.APP_VERSION}"
+        echo "BUILD_TYPE = ${params.BUILD_TYPE}"
     }
 }
     stage('Check Branch Info') {
