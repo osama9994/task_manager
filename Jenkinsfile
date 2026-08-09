@@ -37,7 +37,23 @@ pipeline {
                         variable: 'TASK_SECRET'
                     )
                 ]) {
-                    bat 'if defined TASK_SECRET (echo Secret is available) else (echo Secret is NOT available)'
+                    bat '''
+                        if not defined TASK_SECRET (
+                            echo Secret is NOT available
+                            exit /b 1
+                        )
+
+                        echo Secret is available
+
+                        powershell -NoProfile -Command "$env:TASK_SECRET | Set-Content -Path 'android\\app\\google-services.json' -Encoding UTF8"
+
+                        if exist "android\\app\\google-services.json" (
+                            echo google-services.json created successfully
+                        ) else (
+                            echo Failed to create google-services.json
+                            exit /b 1
+                        )
+                    '''
                 }
             }
         }
@@ -128,10 +144,18 @@ pipeline {
             steps {
                 script {
                     if (params.BUILD_TYPE == 'release') {
+                        echo "=========================================="
                         echo "Building RELEASE APK..."
+                        echo "Version: ${params.APP_VERSION}"
+                        echo "=========================================="
+
                         bat '"%FLUTTER%" build apk --release'
                     } else {
+                        echo "=========================================="
                         echo "Building DEBUG APK..."
+                        echo "Version: ${params.APP_VERSION}"
+                        echo "=========================================="
+
                         bat '"%FLUTTER%" build apk --debug'
                     }
                 }
