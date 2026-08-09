@@ -31,10 +31,10 @@ stages {
 }
 
 stage('Environment Variables') {
-    steps {
+    steps {APP_VERSION
 
         
-echo "APP_VERSION = ${params.App_VERSION}"
+echo "APP_VERSION = ${params.APP_VERSION}"
    
      
     }
