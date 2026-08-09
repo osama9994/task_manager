@@ -31,12 +31,8 @@ stages {
 }
 
 stage('Environment Variables') {
-    steps {APP_VERSION
-
-        
-echo "APP_VERSION = ${params.APP_VERSION}"
-   
-     
+    steps {
+        echo "APP_VERSION = ${params.APP_VERSION}"
     }
 }
     stage('Check Branch Info') {
