@@ -7,43 +7,55 @@ environment {
     APP_NAME = "task_manager"
     BUILD_TYPE = "debug"
 
-    TASK_SECRET = credentials('TASK_MANAGER_SECRET')
+    // TASK_SECRET = credentials('TASK_MANAGER_SECRET')
 }
 
 stages {
-
-stage('Environment Variables') {
+    stage('Use Secret') {
     steps {
-       bat 'echo TASK_SECRET=%TASK_SECRET%'
-        
-        bat 'echo JOB_NAME=%JOB_NAME%'
-        bat 'echo BUILD_NUMBER=%BUILD_NUMBER%'
-        bat 'echo BUILD_ID=%BUILD_ID%'
-        bat 'echo WORKSPACE=%WORKSPACE%'
-        bat 'echo USERPROFILE=%USERPROFILE%'
-        bat 'echo PATH=%PATH%'
-        bat 'echo APP_NAME=%APP_NAME%'
-        bat 'echo BUILD_TYPE=%BUILD_TYPE%'
-        bat 'echo FLUTTER=%FLUTTER%'
-
-        script {
-            echo "Before withEnv: ${env.BUILD_TYPE}"
-
-            withEnv(['BUILD_TYPE=release']) {
-                bat 'echo Inside withEnv BUILD_TYPE=%BUILD_TYPE%'
-            }
-
-            echo "After withEnv: ${env.BUILD_TYPE}"
-            script {
-    echo "APP_NAME = ${env.APP_NAME}"
-    echo "BUILD_TYPE = ${env.BUILD_TYPE}"
-    echo "BUILD_NUMBER = ${env.BUILD_NUMBER}"
-    echo "WORKSPACE = ${env.WORKSPACE}"
-    echo "USERPROFILE = ${env.USERPROFILE}"
-}
+        withCredentials([
+            string(
+                credentialsId: 'TASK_MANAGER_SECRET',
+                variable: 'TASK_SECRET'
+            )
+        ]) {
+            bat 'if defined TASK_SECRET (echo Secret is available) else (echo Secret is NOT available)'
         }
     }
 }
+
+// stage('Environment Variables') {
+//     steps {
+//        bat 'echo TASK_SECRET=%TASK_SECRET%'
+        
+//         bat 'echo JOB_NAME=%JOB_NAME%'
+//         bat 'echo BUILD_NUMBER=%BUILD_NUMBER%'
+//         bat 'echo BUILD_ID=%BUILD_ID%'
+//         bat 'echo WORKSPACE=%WORKSPACE%'
+//         bat 'echo USERPROFILE=%USERPROFILE%'
+//         bat 'echo PATH=%PATH%'
+//         bat 'echo APP_NAME=%APP_NAME%'
+//         bat 'echo BUILD_TYPE=%BUILD_TYPE%'
+//         bat 'echo FLUTTER=%FLUTTER%'
+
+//         script {
+//             echo "Before withEnv: ${env.BUILD_TYPE}"
+
+//             withEnv(['BUILD_TYPE=release']) {
+//                 bat 'echo Inside withEnv BUILD_TYPE=%BUILD_TYPE%'
+//             }
+
+//             echo "After withEnv: ${env.BUILD_TYPE}"
+//             script {
+//     echo "APP_NAME = ${env.APP_NAME}"
+//     echo "BUILD_TYPE = ${env.BUILD_TYPE}"
+//     echo "BUILD_NUMBER = ${env.BUILD_NUMBER}"
+//     echo "WORKSPACE = ${env.WORKSPACE}"
+//     echo "USERPROFILE = ${env.USERPROFILE}"
+// }
+//         }
+//     }
+// }
     stage('Check Branch Info') {
         steps {
             script {
