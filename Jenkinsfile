@@ -4,6 +4,8 @@ agent any
 
 environment {
     FLUTTER = "C:\\Users\\alsha\\scr\\flutter\\bin\\flutter.bat"
+    APP_NAME = "task_manager"
+    BUILD_TYPE = "debug"
 }
 
 stages {
@@ -16,6 +18,9 @@ stages {
             bat 'echo WORKSPACE=%WORKSPACE%'
             bat 'echo USERPROFILE=%USERPROFILE%'
             bat 'echo PATH=%PATH%'
+            bat 'echo APP_NAME=%APP_NAME%'
+bat 'echo BUILD_TYPE=%BUILD_TYPE%'
+bat 'echo FLUTTER=%FLUTTER%'
         }
     }
 
