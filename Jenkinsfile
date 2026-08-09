@@ -4,7 +4,16 @@ pipeline {
     environment {
         FLUTTER = "C:\\Users\\alsha\\scr\\flutter\\bin\\flutter.bat"
     }
-
+stage('Environment Variables') {
+    steps {
+        bat 'echo JOB_NAME=%JOB_NAME%'
+        bat 'echo BUILD_NUMBER=%BUILD_NUMBER%'
+        bat 'echo BUILD_ID=%BUILD_ID%'
+        bat 'echo WORKSPACE=%WORKSPACE%'
+        bat 'echo USERPROFILE=%USERPROFILE%'
+        bat 'echo PATH=%PATH%'
+    }
+}
     stages {
 stage('Check Branch Info') {
     steps {
