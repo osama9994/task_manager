@@ -31,6 +31,13 @@ stage('Environment Variables') {
             }
 
             echo "After withEnv: ${env.BUILD_TYPE}"
+            script {
+    echo "APP_NAME = ${env.APP_NAME}"
+    echo "BUILD_TYPE = ${env.BUILD_TYPE}"
+    echo "BUILD_NUMBER = ${env.BUILD_NUMBER}"
+    echo "WORKSPACE = ${env.WORKSPACE}"
+    echo "USERPROFILE = ${env.USERPROFILE}"
+}
         }
     }
 }
