@@ -1,4 +1,4 @@
-
+```groovy
 pipeline {
     agent any
 
@@ -163,44 +163,46 @@ pipeline {
             steps {
                 script {
 
+                    def apkPath
+
+                    if (params.BUILD_TYPE == 'release') {
+                        apkPath = 'build\\app\\outputs\\flutter-apk\\app-release.apk'
+                    } else {
+                        apkPath = 'build\\app\\outputs\\flutter-apk\\app-debug.apk'
+                    }
+
                     echo "=========================================="
                     echo "SIMULATED FLUTTER BUILD"
                     echo "=========================================="
 
-                    if (params.BUILD_TYPE == 'release') {
+                    echo "App Name   : ${env.APP_NAME}"
+                    echo "App Version: ${params.APP_VERSION}"
+                    echo "Build Type : ${params.BUILD_TYPE}"
+                    echo ""
+                    echo "Simulating Flutter APK build..."
+                    echo "Expected APK:"
+                    echo "${apkPath}"
 
-                        echo "Build Type : RELEASE"
-                        echo "App Name   : ${env.APP_NAME}"
-                        echo "Version    : ${params.APP_VERSION}"
+                    bat """
+                        if not exist "build\\app\\outputs\\flutter-apk" (
+                            mkdir "build\\app\\outputs\\flutter-apk"
+                        )
 
-                        echo "Simulating:"
-                        echo "flutter build apk --release"
-
-                        echo "Expected APK:"
-                        echo "build\\app\\outputs\\flutter-apk\\app-release.apk"
-
-                    } else {
-
-                        echo "Build Type : DEBUG"
-                        echo "App Name   : ${env.APP_NAME}"
-                        echo "Version    : ${params.APP_VERSION}"
-
-                        echo "Simulating:"
-                        echo "flutter build apk --debug"
-
-                        echo "Expected APK:"
-                        echo "build\\app\\outputs\\flutter-apk\\app-debug.apk"
-                    }
+                        echo Simulated APK > "${apkPath}"
+                        echo App Name: ${env.APP_NAME} >> "${apkPath}"
+                        echo App Version: ${params.APP_VERSION} >> "${apkPath}"
+                        echo Build Type: ${params.BUILD_TYPE} >> "${apkPath}"
+                        echo Build Number: ${env.BUILD_NUMBER} >> "${apkPath}"
+                    """
 
                     echo "=========================================="
-                    echo "BUILD SIMULATION SUCCESS"
-                    echo "No real Gradle build was executed."
+                    echo "SIMULATED APK CREATED"
                     echo "=========================================="
                 }
             }
         }
 
-        stage('Verify APK - SIMULATED') {
+        stage('Verify APK') {
             steps {
                 script {
 
@@ -215,11 +217,45 @@ pipeline {
                     echo "=========================================="
                     echo "APK Verification"
                     echo "=========================================="
-                    echo "Expected APK:"
-                    echo "${apkPath}"
-                    echo ""
-                    echo "APK exists: SIMULATED"
+
+                    if (fileExists(apkPath)) {
+
+                        echo "APK found successfully!"
+                        echo "APK Path: ${apkPath}"
+
+                    } else {
+
+                        error "APK was not found: ${apkPath}"
+                    }
+
                     echo "APK verification: SUCCESS"
+                    echo "=========================================="
+                }
+            }
+        }
+
+        stage('Archive APK Artifact') {
+            steps {
+                script {
+
+                    def apkPath
+
+                    if (params.BUILD_TYPE == 'release') {
+                        apkPath = 'build\\app\\outputs\\flutter-apk\\app-release.apk'
+                    } else {
+                        apkPath = 'build\\app\\outputs\\flutter-apk\\app-debug.apk'
+                    }
+
+                    echo "=========================================="
+                    echo "Archiving APK Artifact"
+                    echo "=========================================="
+
+                    archiveArtifacts(
+                        artifacts: apkPath,
+                        fingerprint: true
+                    )
+
+                    echo "APK artifact archived successfully."
                     echo "=========================================="
                 }
             }
@@ -259,4 +295,4 @@ pipeline {
         }
     }
 }
-
+```
