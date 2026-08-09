@@ -10,20 +10,30 @@ environment {
 
 stages {
 
-    stage('Environment Variables') {
-        steps {
-            bat 'echo JOB_NAME=%JOB_NAME%'
-            bat 'echo BUILD_NUMBER=%BUILD_NUMBER%'
-            bat 'echo BUILD_ID=%BUILD_ID%'
-            bat 'echo WORKSPACE=%WORKSPACE%'
-            bat 'echo USERPROFILE=%USERPROFILE%'
-            bat 'echo PATH=%PATH%'
-            bat 'echo APP_NAME=%APP_NAME%'
-bat 'echo BUILD_TYPE=%BUILD_TYPE%'
-bat 'echo FLUTTER=%FLUTTER%'
+stage('Environment Variables') {
+    steps {
+        bat 'echo JOB_NAME=%JOB_NAME%'
+        bat 'echo BUILD_NUMBER=%BUILD_NUMBER%'
+        bat 'echo BUILD_ID=%BUILD_ID%'
+        bat 'echo WORKSPACE=%WORKSPACE%'
+        bat 'echo USERPROFILE=%USERPROFILE%'
+        bat 'echo PATH=%PATH%'
+
+        bat 'echo APP_NAME=%APP_NAME%'
+        bat 'echo BUILD_TYPE=%BUILD_TYPE%'
+        bat 'echo FLUTTER=%FLUTTER%'
+
+        script {
+            echo "Before withEnv: ${env.BUILD_TYPE}"
+
+            withEnv(['BUILD_TYPE=release']) {
+                bat 'echo Inside withEnv BUILD_TYPE=%BUILD_TYPE%'
+            }
+
+            echo "After withEnv: ${env.BUILD_TYPE}"
         }
     }
-
+}
     stage('Check Branch Info') {
         steps {
             script {
