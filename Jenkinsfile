@@ -6,19 +6,22 @@ environment {
     FLUTTER = "C:\\Users\\alsha\\scr\\flutter\\bin\\flutter.bat"
     APP_NAME = "task_manager"
     BUILD_TYPE = "debug"
+
+    TASK_SECRET = credentials('TASK_MANAGER_SECRET')
 }
 
 stages {
 
 stage('Environment Variables') {
     steps {
+        bat 'if defined TASK_SECRET (echo Secret is available) else (echo Secret is NOT available)'
+        
         bat 'echo JOB_NAME=%JOB_NAME%'
         bat 'echo BUILD_NUMBER=%BUILD_NUMBER%'
         bat 'echo BUILD_ID=%BUILD_ID%'
         bat 'echo WORKSPACE=%WORKSPACE%'
         bat 'echo USERPROFILE=%USERPROFILE%'
         bat 'echo PATH=%PATH%'
-
         bat 'echo APP_NAME=%APP_NAME%'
         bat 'echo BUILD_TYPE=%BUILD_TYPE%'
         bat 'echo FLUTTER=%FLUTTER%'
