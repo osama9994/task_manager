@@ -1,13 +1,19 @@
 pipeline {
 agent any
 
-
+parameters {
+    string(
+        name: 'APP_VERSION',
+        defaultValue: '1.0.0',
+        description: 'Application version'
+    )
+}
 environment {
     FLUTTER = "C:\\Users\\alsha\\scr\\flutter\\bin\\flutter.bat"
     APP_NAME = "task_manager"
     BUILD_TYPE = "debug"
 
-    // TASK_SECRET = credentials('TASK_MANAGER_SECRET')
+
 }
 
 stages {
@@ -24,38 +30,15 @@ stages {
     }
 }
 
-// stage('Environment Variables') {
-//     steps {
-//        bat 'echo TASK_SECRET=%TASK_SECRET%'
+stage('Environment Variables') {
+    steps {
+
         
-//         bat 'echo JOB_NAME=%JOB_NAME%'
-//         bat 'echo BUILD_NUMBER=%BUILD_NUMBER%'
-//         bat 'echo BUILD_ID=%BUILD_ID%'
-//         bat 'echo WORKSPACE=%WORKSPACE%'
-//         bat 'echo USERPROFILE=%USERPROFILE%'
-//         bat 'echo PATH=%PATH%'
-//         bat 'echo APP_NAME=%APP_NAME%'
-//         bat 'echo BUILD_TYPE=%BUILD_TYPE%'
-//         bat 'echo FLUTTER=%FLUTTER%'
-
-//         script {
-//             echo "Before withEnv: ${env.BUILD_TYPE}"
-
-//             withEnv(['BUILD_TYPE=release']) {
-//                 bat 'echo Inside withEnv BUILD_TYPE=%BUILD_TYPE%'
-//             }
-
-//             echo "After withEnv: ${env.BUILD_TYPE}"
-//             script {
-//     echo "APP_NAME = ${env.APP_NAME}"
-//     echo "BUILD_TYPE = ${env.BUILD_TYPE}"
-//     echo "BUILD_NUMBER = ${env.BUILD_NUMBER}"
-//     echo "WORKSPACE = ${env.WORKSPACE}"
-//     echo "USERPROFILE = ${env.USERPROFILE}"
-// }
-//         }
-//     }
-// }
+echo "APP_VERSION = ${params.App_VERSION}"
+   
+     
+    }
+}
     stage('Check Branch Info') {
         steps {
             script {
