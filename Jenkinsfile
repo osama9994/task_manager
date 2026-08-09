@@ -14,7 +14,7 @@ stages {
 
 stage('Environment Variables') {
     steps {
-        bat 'if defined TASK_SECRET (echo Secret is available) else (echo Secret is NOT available)'
+       bat 'echo TASK_SECRET=%TASK_SECRET%'
         
         bat 'echo JOB_NAME=%JOB_NAME%'
         bat 'echo BUILD_NUMBER=%BUILD_NUMBER%'
