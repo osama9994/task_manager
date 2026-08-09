@@ -1,3 +1,4 @@
+```groovy
 pipeline {
     agent any
 
@@ -48,29 +49,33 @@ pipeline {
                 echo "RUN_TESTS = ${params.RUN_TESTS}"
             }
         }
-stage('Debug Configuration') {
-    when {
-        expression {
-            return params.BUILD_TYPE == 'debug'
-        }
-    }
-    steps {
-        echo "Running DEBUG configuration"
-        echo "App Version: ${params.APP_VERSION}"
-    }
-}
 
-stage('Release Configuration') {
-    when {
-        expression {
-            return params.BUILD_TYPE == 'release'
+        stage('Debug Configuration') {
+            when {
+                expression {
+                    return params.BUILD_TYPE == 'debug'
+                }
+            }
+
+            steps {
+                echo "Running DEBUG configuration"
+                echo "App Version: ${params.APP_VERSION}"
+            }
         }
-    }
-    steps {
-        echo "Running RELEASE configuration"
-        echo "App Version: ${params.APP_VERSION}"
-    }
-}
+
+        stage('Release Configuration') {
+            when {
+                expression {
+                    return params.BUILD_TYPE == 'release'
+                }
+            }
+
+            steps {
+                echo "Running RELEASE configuration"
+                echo "App Version: ${params.APP_VERSION}"
+            }
+        }
+
         stage('Check Branch Info') {
             steps {
                 script {
@@ -114,7 +119,45 @@ stage('Release Configuration') {
 
             steps {
                 bat '"%FLUTTER%" test --coverage --machine > test-results.json || exit 0'
+
                 bat '"%FLUTTER%" pub run junitreport:tojunit --input test-results.json --output junit-report.xml'
+            }
+        }
+
+        stage('Build Flutter APK') {
+            steps {
+                script {
+                    if (params.BUILD_TYPE == 'release') {
+                        echo "Building RELEASE APK..."
+                        bat '"%FLUTTER%" build apk --release'
+                    } else {
+                        echo "Building DEBUG APK..."
+                        bat '"%FLUTTER%" build apk --debug'
+                    }
+                }
+            }
+        }
+
+        stage('Verify APK') {
+            steps {
+                script {
+                    def apkPath
+
+                    if (params.BUILD_TYPE == 'release') {
+                        apkPath = 'build\\app\\outputs\\flutter-apk\\app-release.apk'
+                    } else {
+                        apkPath = 'build\\app\\outputs\\flutter-apk\\app-debug.apk'
+                    }
+
+                    if (fileExists(apkPath)) {
+                        echo "=========================================="
+                        echo "APK successfully created!"
+                        echo "APK: ${apkPath}"
+                        echo "=========================================="
+                    } else {
+                        error "APK was not found: ${apkPath}"
+                    }
+                }
             }
         }
     }
@@ -124,8 +167,17 @@ stage('Release Configuration') {
             script {
                 if (fileExists('junit-report.xml')) {
                     echo "Publishing Test Results & Coverage..."
-                    junit testResults: 'junit-report.xml', allowEmptyResults: true
-                    archiveArtifacts artifacts: 'coverage/lcov.info', allowEmptyArchive: true
+
+                    junit(
+                        testResults: 'junit-report.xml',
+                        allowEmptyResults: true
+                    )
+
+                    archiveArtifacts(
+                        artifacts: 'coverage/lcov.info',
+                        allowEmptyArchive: true
+                    )
+
                     recordCoverage tools: [[
                         parser: 'LCOV',
                         pattern: 'coverage/lcov.info'
@@ -137,3 +189,4 @@ stage('Release Configuration') {
         }
     }
 }
+```
