@@ -48,7 +48,29 @@ pipeline {
                 echo "RUN_TESTS = ${params.RUN_TESTS}"
             }
         }
+stage('Debug Configuration') {
+    when {
+        expression {
+            return params.BUILD_TYPE == 'debug'
+        }
+    }
+    steps {
+        echo "Running DEBUG configuration"
+        echo "App Version: ${params.APP_VERSION}"
+    }
+}
 
+stage('Release Configuration') {
+    when {
+        expression {
+            return params.BUILD_TYPE == 'release'
+        }
+    }
+    steps {
+        echo "Running RELEASE configuration"
+        echo "App Version: ${params.APP_VERSION}"
+    }
+}
         stage('Check Branch Info') {
             steps {
                 script {
