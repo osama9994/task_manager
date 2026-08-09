@@ -1,26 +1,24 @@
 pipeline {
-agent any
+    agent any
 
-parameters {
-    string(
-        name: 'APP_VERSION',
-        defaultValue: '1.0.0',
-        description: 'Application version'
-    )
+    parameters {
+        string(
+            name: 'APP_VERSION',
+            defaultValue: '1.0.0',
+            description: 'Application version'
+        )
 
-    choice(
-        name: 'BUILD_TYPE',
-        choices: ['debug', 'release'],
-        description: 'Choose the Flutter build type'
-    )
-}
-environment {
-    FLUTTER = "C:\\Users\\alsha\\scr\\flutter\\bin\\flutter.bat"
-    APP_NAME = "task_manager"
-#
+        choice(
+            name: 'BUILD_TYPE',
+            choices: ['debug', 'release'],
+            description: 'Choose the Flutter build type'
+        )
+    }
 
-
-}
+    environment {
+        FLUTTER = "C:\\Users\\alsha\\scr\\flutter\\bin\\flutter.bat"
+        APP_NAME = "task_manager"
+    }
 
 stages {
     stage('Use Secret') {
